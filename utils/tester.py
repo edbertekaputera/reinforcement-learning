@@ -19,12 +19,6 @@ class Tester:
 		}
 		self.device = device
 
-	def get_one_hot_encoding(self, state):
-		state_arr = np.zeros(self.env.observation_space.n)
-		state_arr[state] = 1
-		# Convert NumPy array to PyTorch Tensor
-		return torch.tensor(state_arr, dtype=torch.float32, device=self.device).unsqueeze(0)
-
 	def record_episode(self, steps:int, reward:float) -> None:
 		"""Method to record each test episode"""
 		self.testing_history["steps"].append(steps)
@@ -54,10 +48,8 @@ class Tester:
 
 		# Iterate steps
 		while True:
-			# Get the one hot encoding
-			processed_observation = self.get_one_hot_encoding(observation)
 			# Select best action (test)
-			action = self.agent.select_action(processed_observation)
+			action = self.agent.select_action(observation)
 			actions.append(action)
 			# Perform the action
 			observation, reward, terminated, truncated, _ = self.env.step(action)

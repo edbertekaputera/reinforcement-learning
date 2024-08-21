@@ -5,6 +5,7 @@ import torch.nn.functional as F
 from gymnasium.spaces import Discrete
 import random
 import math
+import numpy as np
 from typing import Callable
 
 # Local dependencies
@@ -60,11 +61,18 @@ class DQNAgent(RLAgent):
 	def decay_epsilon(self, episodes:int):
 		self.epsilon = self.eps_min + (self.eps0 - self.eps_min) * math.exp(-1 * episodes / self.eps_decay)
 
+	def get_one_hot_encoding(self, state):
+		state_arr = np.zeros(self.env.observation_space.n)
+		state_arr[state] = 1
+		# Convert NumPy array to PyTorch Tensor
+		return torch.tensor(state_arr, dtype=torch.float32, device=self.device).unsqueeze(0)
+
 	def select_action(self, state):
 		"""Method to simulate the agent selecting an action from the action space"""
 		sample = random.random()
 		# If random sample is more than threshold, we exploit
 		if sample > self.epsilon:
+			state = self.get_one_hot_encoding(state)
 			# Exploitation, simply take the Arg Max of the Q(s, a)
 			with torch.no_grad():
 				return self.main_q_network(state).max(1).indices.view(1, 1).item()
