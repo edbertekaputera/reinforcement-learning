@@ -29,7 +29,7 @@ class PPOAgent(RLAgent):
             gamma=self.gamma,
             verbose=1
         )
-
+        
     def select_action(self, state) -> int | float | Tensor:
         action, _states = self.model.predict(state, deterministic=True)
         return action.item()
@@ -38,7 +38,7 @@ class PPOAgent(RLAgent):
         self.model.save(path=path)
 
     def load_model(self, path:str) -> None:
-        self.model = PPO.load(path=path)
+        self.model.set_parameters(path=path)
 
     def get_model(self) -> PPO:
         return self.model

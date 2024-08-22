@@ -6,3 +6,4 @@ notebook==7.2.*
 matplotlib==3.9.*
 seaborn==0.13.*
 typer==0.12.*
+stable-baselines3==2.3.*
