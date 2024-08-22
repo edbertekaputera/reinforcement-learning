@@ -7,6 +7,8 @@ from gymnasium import make
 import torch
 # Local dependencies
 from algorithms.DQN import DQNAgent
+from algorithms.PPO import PPOAgent
+from algorithms.QLearning import QLearningAgent
 from utils import Tester
 
 # Enums
@@ -24,7 +26,7 @@ class AcceleratorType(str, Enum):
 	cuda = "cuda"
 
 def main(
-	model_paths: Annotated[List[Path], typer.Argument(help="Paths to model files.")],
+	model_path: Annotated[Path, typer.Argument(help="Path to model files.")],
 	algorithm: Annotated[Algorithm,  typer.Option(help="RL Algorithm")] = Algorithm.dqn,
 	environment: Annotated[GymEnvironment, typer.Option(help="Gym Environment ID")] = GymEnvironment.taxi,
 	episodes: Annotated[int, typer.Option(min=1, help="Number of episodes")] = 400,
@@ -32,19 +34,9 @@ def main(
 	device: Annotated[Optional[AcceleratorType], typer.Option(help="Accelerator Device Type")] = None,
 ):
 	# Check file parameters
-	if not model_paths or len(model_paths) == 0:
-		print("No model file path.")
+	if not model_path.is_file():
+		print(f"Specified model file path {model_path} does not exist.")
 		raise typer.Abort()
-	if algorithm != Algorithm.ppo and len(model_paths) > 1:
-		print("Only one model file path required.")
-		raise typer.Abort()
-	if algorithm == Algorithm.ppo and len(model_paths) < 2:
-		print("Two model file path required.")
-		raise typer.Abort()
-	for paths in model_paths:
-		if not paths.is_file():
-			print(f"Specified model file path {paths} does not exist.")
-			raise typer.Abort()
 	
 	# Accelerator
 	if device == AcceleratorType.cuda:
@@ -70,9 +62,24 @@ def main(
 			observation_space=env.observation_space,
 			device=torch_device
 		)
-		agent.load_model(model_paths[0], weights_only=True)
+		agent.load_model(model_path, weights_only=True)
 		agent.eval()
 	
+	elif algorithm == Algorithm.ppo:
+		agent = PPOAgent(
+			action_space=env.action_space,
+			observation_space=env.observation_space
+		)
+		agent.load_model(model_path)
+
+	else:
+		agent = QLearningAgent(
+			action_space=env.action_space,
+			observation_space=env.observation_space
+		)
+		agent.load_model(model_path)
+		agent.set_exploit()
+
 	# Setup Tester
 	tester = Tester(env=env, agent=agent, device=torch_device)
 	# Simulate
