@@ -62,7 +62,7 @@ class DQNAgent(RLAgent):
 		self.epsilon = self.eps_min + (self.eps0 - self.eps_min) * math.exp(-1 * episodes / self.eps_decay)
 
 	def get_one_hot_encoding(self, state):
-		state_arr = np.zeros(self.env.observation_space.n)
+		state_arr = np.zeros(self.observation_space.n)
 		state_arr[state] = 1
 		# Convert NumPy array to PyTorch Tensor
 		return torch.tensor(state_arr, dtype=torch.float32, device=self.device).unsqueeze(0)
