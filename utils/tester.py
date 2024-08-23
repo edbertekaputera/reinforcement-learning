@@ -10,14 +10,13 @@ from algorithms import RLAgent
 
 # Universal Tester Class
 class Tester:
-	def __init__(self, env:Env, agent:RLAgent, device: torch.device = torch.device("cpu")) -> None:
+	def __init__(self, env:Env, agent:RLAgent) -> None:
 		self.env = env
 		self.agent = agent
 		self.testing_history = {
 			"steps": [],
 			"reward": [],
 		}
-		self.device = device
 
 	def record_episode(self, steps:int, reward:float) -> None:
 		"""Method to record each test episode"""

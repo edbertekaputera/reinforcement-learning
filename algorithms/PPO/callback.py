@@ -21,7 +21,7 @@ class RewardStepsCallback(BaseCallback):
                 self.episode_steps.append(info['episode']['l'])
         
         if self.save_checkpoint and self.num_timesteps % self.save_freq == 0:
-            model_path = os.path.join(self.save_path, f'PPO_checkpoint/model_{self.num_timesteps}')
+            model_path = os.path.join(self.save_path, f'taxi_ppo_model_{self.num_timesteps}')
             self.model.save(model_path)
             print(f"Saved model to {model_path}")
         

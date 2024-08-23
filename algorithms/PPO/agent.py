@@ -38,7 +38,7 @@ class PPOAgent(RLAgent):
         self.model.save(path=path)
 
     def load_model(self, path:str) -> None:
-        self.model.set_parameters(path=path)
+        self.model.set_parameters(load_path_or_dict=path)
 
     def get_model(self) -> PPO:
         return self.model

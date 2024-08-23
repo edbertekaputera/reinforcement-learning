@@ -68,7 +68,8 @@ def main(
 	elif algorithm == Algorithm.ppo:
 		agent = PPOAgent(
 			action_space=env.action_space,
-			observation_space=env.observation_space
+			observation_space=env.observation_space,
+			n_environment=1
 		)
 		agent.load_model(model_path)
 
@@ -81,7 +82,7 @@ def main(
 		agent.set_exploit()
 
 	# Setup Tester
-	tester = Tester(env=env, agent=agent, device=torch_device)
+	tester = Tester(env=env, agent=agent)
 	# Simulate
 	tester.simulation(episodes=episodes)
 	# Plot Distribution
