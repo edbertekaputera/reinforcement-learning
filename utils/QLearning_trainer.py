@@ -11,7 +11,9 @@ class QLearningTrainer:
 			"reward": [],
 			"epsilon": []
 		}
-
+		self.save_path = save_path
+		self.save_rate = save_rate
+  
 	def record_episode(self, steps: int, reward: int, epsilon: float) -> None:
 		self.training_history["steps"].append(steps)
 		self.training_history["reward"].append(reward)
@@ -58,4 +60,7 @@ class QLearningTrainer:
 			# Save model
 			if episode % self.save_rate == 0:
 				self.agent.save_model(f"{self.save_path}/taxi_qtable_{episode}.npy")
+  
+	
+  
 
